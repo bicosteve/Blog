@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
+const auth = require('../middleware/auth');
 const validateEdit = require('../validation/edit');
 const User = mongoose.model('users');
 
@@ -20,21 +21,16 @@ route.get('/users', async (req, res) => {
   }
 });
 
-route.get('/user/:userId', async (req, res) => {
+route.get('/user/me', auth, async (req, res) => {
   try {
-    const errors = {};
-    const user = await User.findById(req.params.userId);
-    if (!user) {
-      errors.nouser = 'User not found';
-      return res.status(404).json(errors);
-    }
+    const user = await User.findById(req.user._id);
     return res.status(200).json({ user });
   } catch (error) {
     return res.status(500).json(error.message);
   }
 });
 
-route.put('/user/:userId', async (req, res) => {
+route.put('/user/me', auth, async (req, res) => {
   try {
     const { errors, isValid } = validateEdit(req.body);
 
@@ -51,12 +47,7 @@ route.put('/user/:userId', async (req, res) => {
       return res.status(400).json(errors);
     }
 
-    const user = await User.findById(req.params.userId);
-
-    if (!user) {
-      errors.nouser = 'No user was found!';
-      return res.status(404).json(errors);
-    }
+    const user = await User.findById(req.user._id);
 
     updates.forEach((update) => {
       user[update] = req.body[update];
@@ -71,15 +62,9 @@ route.put('/user/:userId', async (req, res) => {
   }
 });
 
-route.delete('/user/:userId', async (req, res) => {
+route.delete('/user/me', auth, async (req, res) => {
   try {
-    const errors = {};
-    const user = await User.findById(req.params.userId);
-    if (!user) {
-      errors.nouser = 'No user was found!';
-      return res.status(404).json(errors);
-    }
-
+    const user = await User.findById(req.user._id);
     await user.remove();
     return res.status(200).json({ msg: 'User removed!' });
   } catch (error) {
