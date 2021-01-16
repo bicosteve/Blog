@@ -11,10 +11,6 @@ const route = express();
 
 const User = mongoose.model('users');
 
-route.get('/user', (req, res) => {
-  return res.status(200).json({ msg: 'Working' });
-});
-
 route.post('/register', async (req, res) => {
   try {
     const { errors, isValid } = validateRegister(req.body);

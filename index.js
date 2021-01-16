@@ -22,6 +22,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use('/auth', require('./routes/auth'));
+app.use('/users', require('./routes/user'));
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => {

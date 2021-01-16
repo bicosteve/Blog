@@ -13,6 +13,11 @@ const userSchema = new Schema({
   password: {
     type: String,
   },
+  dateCreated: {
+    type: Date,
+    default: Date.now(),
+  },
+  updated: Date,
 });
 
 userSchema.pre('save', async function (next) {
